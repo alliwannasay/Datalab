@@ -184,8 +184,9 @@ int logicalShift(int x, int n) {
  */
 int bitCount(int x) {
   int tmp = (0x01)|(0x01<<8);
+  int result;
   tmp = tmp | (tmp<<16);
-  int result=tmp&x;
+  result=tmp&x;
   result+=tmp&(x>>1);
   result+=tmp&(x>>2);
   result+=tmp&(x>>3);
@@ -230,7 +231,6 @@ int tmin(void) {
  *   Rating: 2
  */
 int fitsBits(int x, int n) {
-  if(n == 32) return 0;
   int sign = x >> 31;
   int negSing = !sign;
   int nSign = x >> (n+(~0));
@@ -304,19 +304,28 @@ int isLessOrEqual(int x, int y) {
  */
 int ilog2(int x) {
   int isOn16 = !!(x>>16);
-  int wOn16 = isOn16 << 4;
+  int isOn8;
+  int isOn4;
+  int isOn2;
+  int isOn1;
+  int wOn16;
+  int wOn8;
+  int wOn4;
+  int wOn2;
+  int wOn1;
+  wOn16 = isOn16 << 4;
   x = x>>wOn16;
-  int isOn8 = !!(x>>8);
-  int wOn8 = isOn8 << 3;
+  isOn8 = !!(x>>8);
+  wOn8 = isOn8 << 3;
   x = x>>wOn8;
-  int isOn4 = !!(x>>4);
-  int wOn4 = isOn4 << 2;
+  isOn4 = !!(x>>4);
+  wOn4 = isOn4 << 2;
   x = x>>wOn4;
-  int isOn2 = !!(x>>2);
-  int wOn2 = isOn2 << 1;
+  isOn2 = !!(x>>2);
+  wOn2 = isOn2 << 1;
   x = x>>wOn2;
-  int isOn1 = !!(x>>1);
-  int wOn1 = isOn1;
+  isOn1 = !!(x>>1);
+  wOn1 = isOn1;
   return wOn16+wOn8+wOn4+wOn2+wOn1;
 }
 /* 
@@ -353,15 +362,15 @@ unsigned float_i2f(int x) {
   int e = 0;
   int frac = 0;
   int isCarring;
+  int i = 30;
+  int E;
+  int Bias = 127;
   int frac_aux = (1<<23)-1;
   if(x == 0x80000000) return 0xcf000000;
   if(x == 0) return 0;
-
-  int i = 30;
   if(x < 0) x = -x;
   while(!((x>>i)&1)) i--;
-  int E = i;
-  int Bias = 127;
+  E = i;
   e = E + Bias;
   x = x<<(31 - E);
   frac = frac_aux&(x>>8);
